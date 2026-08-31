@@ -58,10 +58,8 @@ yet answered:
   complete the handshake) vs. having the user paste in a fine-scoped personal access
   token. Whichever is picked, the token lives only in the browser (e.g.
   `localStorage`), never sent anywhere but GitHub's API.
-- **Data format** for template content (e.g. how calendar events are represented as
-  files in `calender/`) so both the editor and the static site can read/write it —
-  needed before the calendar template
-  ([`docs/calender/README.md`](../calender/README.md)) can be built out.
+- ~~Data format for template content~~ — decided for the calendar template: see
+  [`docs/calender/data-format.md`](../calender/data-format.md).
 - **One shared hosted copy vs. every fork hosting its own editor page** — the static
   app can work either way (it just needs to know which repo it's pointed at), but
   the default club workflow should pick one.

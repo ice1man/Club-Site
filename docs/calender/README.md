@@ -37,3 +37,8 @@ Two paths, producing the same result — a commit to the repo:
 - [`calender/assets/`](../../calender/assets/) holds its supporting assets (styles,
   images, etc.).
 - The root [`index.html`](../../index.html) links out to this page.
+
+## Data format
+
+Events are stored as iCalendar (`calender/events.ics`), read by both the editor and
+the page itself. See [`docs/calender/data-format.md`](data-format.md).
