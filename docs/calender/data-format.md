@@ -75,5 +75,6 @@ END:VCALENDAR
 - Whether/when to move past all-day-only events (time-of-day, multi-day events).
 - Display rules: does the site show past events, or only upcoming? Sort order?
   (Likely upcoming-first, but not decided.)
-- Whether to expose `events.ics` itself as a subscribe link on the page, beyond just
-  using it as the site's data source.
+- ~~Whether to expose `events.ics` itself as a subscribe link~~ — decided: both
+  pages link to it via `webcal:`, so calendar apps subscribe rather than
+  one-time-import.

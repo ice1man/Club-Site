@@ -26,6 +26,14 @@ function parseICS(text) {
   }).filter((e) => e.uid && e.date && e.summary);
 }
 
+// Points #subscribe-link at this feed's webcal:// URL, so a calendar app
+// (Apple/Outlook Calendar, etc.) subscribes instead of doing a one-time import.
+function setupSubscribeLink() {
+  const link = document.getElementById("subscribe-link");
+  if (!link) return;
+  link.href = new URL("events.ics", location.href).href.replace(/^https?:/, "webcal:");
+}
+
 // Fetches events.ics and renders them into #events, filtered/sorted by mode.
 async function renderEvents(mode) {
   const list = document.getElementById("events");

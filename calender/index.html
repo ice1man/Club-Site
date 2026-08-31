@@ -9,10 +9,11 @@
   <nav>
     <a href="../index.html">← Home</a>
     <a href="past.html">Past events</a>
+    <a id="subscribe-link" href="events.ics">Subscribe</a>
   </nav>
   <h1>Upcoming events</h1>
   <ul id="events"></ul>
   <script src="assets/calendar.js"></script>
-  <script>renderEvents("upcoming");</script>
+  <script>renderEvents("upcoming"); setupSubscribeLink();</script>
 </body>
 </html>
