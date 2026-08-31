@@ -1,0 +1,79 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 24rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+input[type="text"], input[type="password"], input[type="date"] {
+  font: inherit;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f5f5f5;
+  cursor: pointer;
+  width: fit-content;
+}
+
+button.primary {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.help {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.template-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.template-card h3 {
+  margin: 0 0 0.25rem;
+}
+
+.template-card p {
+  margin: 0 0 0.75rem;
+  color: #666;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 9rem 1fr 1fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.event-list {
+  margin-bottom: 1rem;
+}
+
+.status {
+  color: #666;
+}

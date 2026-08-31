@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Editor</title>
+<link rel="stylesheet" href="../calender/assets/style.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav>
+    <a href="../index.html">← Home</a>
+  </nav>
+  <h1>Site editor</h1>
+
+  <section data-screen="connect">
+    <p class="help">
+      Connect a fine-grained personal access token scoped to
+      <strong>this repository</strong> with <strong>Contents: read and write</strong>
+      permission. It's saved only in this browser and sent only to GitHub's API —
+      <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">create one here</a>.
+    </p>
+    <form id="connect-form">
+      <label>Access token
+        <input id="f-token" type="password" required>
+      </label>
+      <label>Repository owner
+        <input id="f-owner" type="text" required>
+      </label>
+      <label>Repository name
+        <input id="f-repo" type="text" required>
+      </label>
+      <label>Branch
+        <input id="f-branch" type="text" value="main">
+      </label>
+      <button type="submit" class="primary">Connect</button>
+    </form>
+  </section>
+
+  <section data-screen="picker" hidden>
+    <nav><button type="button" id="disconnect">Disconnect</button></nav>
+    <div id="template-list"></div>
+  </section>
+
+  <section data-screen="editor-screen" hidden>
+    <nav><button type="button" id="back-to-picker">← Back</button></nav>
+    <h2 id="editor-title"></h2>
+    <div id="editor-container"></div>
+  </section>
+
+  <script src="../calender/assets/ics.js"></script>
+  <script src="assets/github.js"></script>
+  <script src="assets/templates.js"></script>
+  <script src="assets/editor.js"></script>
+</body>
+</html>
