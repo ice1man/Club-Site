@@ -38,14 +38,10 @@ club can drop in and then customize through the same edit/commit/push flow.
 4. Editor commits the change and pushes it.
 5. GitHub Pages redeploys; the live site reflects the change.
 
-## Open questions (not answered by this doc)
+## Tech stack
 
-This is a vision doc, not a technical spec. Concrete decisions still needed:
-
-- Tech stack for the editor app itself.
-- How the editor authenticates to push to a club's repo (and how much git knowledge,
-  if any, a club needs to set that up once).
-- Where/how the editor itself runs and is distributed to clubs (hosted tool vs.
-  something each club runs).
-- Data format templates use to represent editable content (e.g. how calendar events
-  are stored so both the editor and the static site can read them).
+The editor is a static, client-side web app (no backend) that talks to a club's repo
+through GitHub's API (no local git needed), built in vanilla JS/HTML/CSS (no
+framework, no build step). See [`docs/editor/tech-stack.md`](tech-stack.md) for the
+full rationale and what's still open — notably the auth mechanism and the data
+format template content is stored in.
