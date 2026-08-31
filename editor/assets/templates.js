@@ -1,7 +1,7 @@
 // The template registry. Each entry describes one template site the picker
-// can show; editor.js is generic over this list. Calendar is the only entry
-// today, but this is the extension point future templates register into —
-// see docs/editor/README.md.
+// can show; editor.js is generic over this list. The row/add/save UI itself
+// is shared (list-editor.js) — each template just configures fields and how
+// to parse/serialize its data file. See docs/editor/README.md.
 
 function makeUid(date, summary, taken) {
   const pad = (n) => String(n).padStart(2, "0");
@@ -13,45 +13,9 @@ function makeUid(date, summary, taken) {
   return uid;
 }
 
-function eventRow(event, onRemove) {
-  const row = document.createElement("div");
-  row.className = "event-row";
-
-  const dateInput = document.createElement("input");
-  dateInput.type = "date";
-  dateInput.className = "f-date";
-  if (event.date) {
-    const pad = (n) => String(n).padStart(2, "0");
-    dateInput.value = `${event.date.getFullYear()}-${pad(event.date.getMonth() + 1)}-${pad(event.date.getDate())}`;
-  }
-
-  const summaryInput = document.createElement("input");
-  summaryInput.type = "text";
-  summaryInput.className = "f-summary";
-  summaryInput.placeholder = "Event title";
-  summaryInput.value = event.summary || "";
-
-  const locationInput = document.createElement("input");
-  locationInput.type = "text";
-  locationInput.className = "f-location";
-  locationInput.placeholder = "Location (optional)";
-  locationInput.value = event.location || "";
-
-  const descriptionInput = document.createElement("input");
-  descriptionInput.type = "text";
-  descriptionInput.className = "f-description";
-  descriptionInput.placeholder = "Description (optional)";
-  descriptionInput.value = event.description || "";
-
-  const removeButton = document.createElement("button");
-  removeButton.type = "button";
-  removeButton.className = "remove-event";
-  removeButton.textContent = "Remove";
-  removeButton.addEventListener("click", () => onRemove(row));
-
-  row.append(dateInput, summaryInput, locationInput, descriptionInput, removeButton);
-  row._uid = event.uid;
-  return row;
+function dateToInputValue(date) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 const TEMPLATES = [
@@ -63,80 +27,57 @@ const TEMPLATES = [
     // Already ships in every fork of Club-Site — nothing to create.
     scaffold: null,
 
-    async renderEditor(container, ctx) {
-      container.innerHTML = "";
-      const status = document.createElement("p");
-      status.className = "status";
-      status.textContent = "Loading events…";
-      container.append(status);
+    renderEditor: (container, ctx) => renderListEditor(container, {
+      github: ctx.github,
+      dataPath: "calender/events.ics",
+      fields: [
+        { key: "date", label: "Date", type: "date", required: true },
+        { key: "summary", label: "Event title", type: "text", required: true },
+        { key: "location", label: "Location", type: "text" },
+        { key: "description", label: "Description", type: "text" },
+      ],
+      parse: parseICS,
+      serialize: serializeICS,
+      idKey: "uid",
+      generateId: (record, taken) => makeUid(record.date, record.summary, taken),
+      toValues: (record) => ({
+        date: record.date ? dateToInputValue(record.date) : "",
+        summary: record.summary || "",
+        location: record.location || "",
+        description: record.description || "",
+      }),
+      fromValues: (values) => {
+        const [y, m, d] = values.date.split("-").map(Number);
+        return {
+          date: new Date(y, m - 1, d),
+          summary: values.summary,
+          location: values.location,
+          description: values.description,
+        };
+      },
+      commitMessage: "Update events via editor",
+    }),
+  },
+  {
+    id: "about",
+    name: "About Us",
+    description: "Club officers: name, role, bio, and photo.",
+    dataPath: "about/admins.json",
+    // Already ships in every fork of Club-Site — nothing to create.
+    scaffold: null,
 
-      let file;
-      try {
-        file = await ctx.github.getFile(this.dataPath);
-      } catch (err) {
-        status.textContent = err.message;
-        return;
-      }
-      const events = file ? parseICS(file.text) : [];
-      status.remove();
-
-      const list = document.createElement("div");
-      list.className = "event-list";
-      const taken = new Set(events.map((e) => e.uid));
-      for (const e of events) list.append(eventRow(e, (row) => row.remove()));
-
-      const addButton = document.createElement("button");
-      addButton.type = "button";
-      addButton.textContent = "+ Add event";
-      addButton.addEventListener("click", () => {
-        list.append(eventRow({ date: new Date() }, (row) => row.remove()));
-      });
-
-      const saveButton = document.createElement("button");
-      saveButton.type = "button";
-      saveButton.textContent = "Save changes";
-      saveButton.className = "primary";
-
-      const saveStatus = document.createElement("p");
-      saveStatus.className = "status";
-
-      saveButton.addEventListener("click", async () => {
-        const rows = [...list.querySelectorAll(".event-row")];
-        const newEvents = [];
-        for (const row of rows) {
-          const dateVal = row.querySelector(".f-date").value;
-          const summary = row.querySelector(".f-summary").value.trim();
-          if (!dateVal || !summary) continue; // skip incomplete rows
-          const [y, m, d] = dateVal.split("-").map(Number);
-          const date = new Date(y, m - 1, d);
-          const uid = row._uid || makeUid(date, summary, taken);
-          taken.add(uid);
-          newEvents.push({
-            uid,
-            date,
-            summary,
-            location: row.querySelector(".f-location").value.trim(),
-            description: row.querySelector(".f-description").value.trim(),
-          });
-        }
-
-        saveButton.disabled = true;
-        saveStatus.textContent = "Saving…";
-        try {
-          await ctx.github.putFile(
-            this.dataPath,
-            serializeICS(newEvents),
-            file ? file.sha : undefined,
-            "Update events via editor",
-          );
-          saveStatus.textContent = "Saved. GitHub Pages will redeploy shortly.";
-        } catch (err) {
-          saveStatus.textContent = err.message;
-        }
-        saveButton.disabled = false;
-      });
-
-      container.append(list, addButton, saveButton, saveStatus);
-    },
+    renderEditor: (container, ctx) => renderListEditor(container, {
+      github: ctx.github,
+      dataPath: "about/admins.json",
+      fields: [
+        { key: "photo", label: "Photo path", type: "text" },
+        { key: "name", label: "Name", type: "text", required: true },
+        { key: "role", label: "Role", type: "text", required: true },
+        { key: "bio", label: "Bio", type: "textarea" },
+      ],
+      parse: (text) => JSON.parse(text),
+      serialize: (records) => JSON.stringify(records, null, 2),
+      commitMessage: "Update admins via editor",
+    }),
   },
 ];

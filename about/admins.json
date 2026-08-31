@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Jordan Lee",
+    "role": "President",
+    "bio": "Runs meetings and represents the club to the school. Reach out with any general questions.",
+    "photo": "assets/photos/president.svg"
+  },
+  {
+    "name": "Amara Osei",
+    "role": "Vice President",
+    "bio": "Steps in for the president and leads event planning.",
+    "photo": "assets/photos/vice-president.svg"
+  },
+  {
+    "name": "Priya Nair",
+    "role": "Treasurer",
+    "bio": "Manages the budget and fundraiser proceeds.",
+    "photo": "assets/photos/treasurer.svg"
+  },
+  {
+    "name": "Sam Whitfield",
+    "role": "Secretary",
+    "bio": "Keeps meeting notes and handles club communications.",
+    "photo": "assets/photos/secretary.svg"
+  }
+]

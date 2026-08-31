@@ -12,11 +12,16 @@ label {
   font-size: 0.9rem;
 }
 
-input[type="text"], input[type="password"], input[type="date"] {
+input[type="text"], input[type="password"], input[type="date"], textarea {
   font: inherit;
   padding: 0.4rem 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 2.4rem;
 }
 
 button {
@@ -61,16 +66,24 @@ button:disabled {
   color: #666;
 }
 
-.event-row {
-  display: grid;
-  grid-template-columns: 9rem 1fr 1fr 1fr auto;
+.record-row {
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
-  align-items: center;
+  align-items: start;
   padding: 0.5rem 0;
   border-bottom: 1px solid #eee;
 }
 
-.event-list {
+.record-row input, .record-row textarea {
+  flex: 1 1 8rem;
+}
+
+.record-row input[type="date"] {
+  flex: 0 1 9rem;
+}
+
+.record-list {
   margin-bottom: 1rem;
 }
 

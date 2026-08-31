@@ -1,0 +1,30 @@
+#admins {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-card {
+  text-align: center;
+}
+
+.admin-card img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+}
+
+.admin-card h3 {
+  margin: 0.75rem 0 0;
+}
+
+.role {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.1rem 0 0.5rem;
+}
+
+.bio {
+  font-size: 0.9rem;
+  margin: 0;
+}
