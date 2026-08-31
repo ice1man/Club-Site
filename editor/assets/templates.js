@@ -1,7 +1,9 @@
 // The template registry. Each entry describes one template site the picker
-// can show; editor.js is generic over this list. The row/add/save UI itself
-// is shared (list-editor.js) — each template just configures fields and how
-// to parse/serialize its data file. See docs/editor/README.md.
+// can show; editor.js is generic over this list. The editing UI itself is
+// shared — list-editor.js for a list of records (calendar, admins),
+// record-editor.js for a single record (who-we-are) — each template just
+// configures fields and how to parse/serialize its data file. See
+// docs/editor/README.md.
 
 function makeUid(date, summary, taken) {
   const pad = (n) => String(n).padStart(2, "0");
@@ -78,6 +80,47 @@ const TEMPLATES = [
       parse: (text) => JSON.parse(text),
       serialize: (records) => JSON.stringify(records, null, 2),
       commitMessage: "Update admins via editor",
+    }),
+  },
+  {
+    id: "who-we-are",
+    name: "Who We Are",
+    description: "Club mission, photo, and why it's worth taking seriously.",
+    dataPath: "who-we-are/info.json",
+    // Already ships in every fork of Club-Site — nothing to create.
+    scaffold: null,
+
+    renderEditor: (container, ctx) => renderRecordEditor(container, {
+      github: ctx.github,
+      dataPath: "who-we-are/info.json",
+      fields: [
+        { key: "photo", label: "Photo path", type: "text" },
+        { key: "mission", label: "Mission", type: "textarea", required: true },
+        { key: "reasons", label: "Reasons (one per line)", type: "lines" },
+      ],
+      parse: (text) => JSON.parse(text),
+      serialize: (record) => JSON.stringify(record, null, 2),
+      commitMessage: "Update Who We Are via editor",
+    }),
+  },
+  {
+    id: "site",
+    name: "Home Page",
+    description: "Site title and whether icons are shown on the home page.",
+    dataPath: "site.json",
+    // Already ships in every fork of Club-Site — nothing to create.
+    scaffold: null,
+
+    renderEditor: (container, ctx) => renderRecordEditor(container, {
+      github: ctx.github,
+      dataPath: "site.json",
+      fields: [
+        { key: "title", label: "Site title", type: "text", required: true },
+        { key: "showIcons", label: "Show icons", type: "checkbox" },
+      ],
+      parse: (text) => JSON.parse(text),
+      serialize: (record) => JSON.stringify(record, null, 2),
+      commitMessage: "Update home page via editor",
     }),
   },
 ];

@@ -5,13 +5,29 @@
 <title>Club Site</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%91%A5</text></svg>">
 <style>
-  body { display: flex; align-items: center; justify-content: center; gap: 4rem; height: 100vh; margin: 0; }
-  a { text-decoration: none; text-align: center; font-family: sans-serif; color: inherit; }
-  span { display: block; font-size: 8rem; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; height: 100vh; margin: 0; font-family: sans-serif; }
+  .links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3rem; }
+  a { text-decoration: none; text-align: center; color: inherit; }
+  .icon { display: block; font-size: 6rem; }
 </style>
 </head>
 <body>
-  <a href="calender/index.html"><span>📅</span>Calender</a>
-  <a href="about/index.html"><span>👥</span>About Us</a>
+  <h1 id="site-title">Club Site</h1>
+  <div class="links">
+    <a href="who-we-are/index.html"><span class="icon">🏛️</span>Who We Are</a>
+    <a href="calender/index.html"><span class="icon">📅</span>Calender</a>
+    <a href="about/index.html"><span class="icon">👥</span>About Us</a>
+  </div>
+  <script>
+    fetch("site.json").then((r) => r.json()).then((site) => {
+      if (site.title) {
+        document.title = site.title;
+        document.getElementById("site-title").textContent = site.title;
+      }
+      if (site.showIcons === false) {
+        document.querySelectorAll(".icon").forEach((el) => el.style.display = "none");
+      }
+    }).catch(() => {}); // keep the hardcoded defaults above if this fails
+  </script>
 </body>
 </html>
