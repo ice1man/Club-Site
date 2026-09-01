@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <title>Editor</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%91%A5</text></svg>">
-<link rel="stylesheet" href="../calender/assets/style.css?v=1">
-<link rel="stylesheet" href="assets/style.css?v=1">
+<link rel="stylesheet" href="../calender/assets/style.css?v=3">
+<link rel="stylesheet" href="assets/style.css?v=3">
 </head>
 <body>
   <nav>
@@ -39,7 +39,21 @@
 
   <section data-screen="picker" hidden>
     <nav><button type="button" id="disconnect">Disconnect</button></nav>
+    <div id="update-banner" class="update-banner" hidden></div>
     <div id="template-list"></div>
+
+    <section class="backup-section">
+      <h2>Backup</h2>
+      <p class="help">
+        Download everything below as one file and keep it somewhere safe. If
+        something ever goes wrong, upload it here to restore.
+      </p>
+      <button type="button" id="download-backup">Download backup</button>
+      <label>Restore from a backup file
+        <input type="file" id="restore-file" accept="application/json">
+      </label>
+      <div id="backup-status" class="status"></div>
+    </section>
   </section>
 
   <section data-screen="editor-screen" hidden>
@@ -48,11 +62,12 @@
     <div id="editor-container"></div>
   </section>
 
-  <script src="../calender/assets/ics.js?v=1"></script>
-  <script src="assets/github.js?v=1"></script>
-  <script src="assets/list-editor.js?v=1"></script>
-  <script src="assets/record-editor.js?v=1"></script>
-  <script src="assets/templates.js?v=1"></script>
-  <script src="assets/editor.js?v=1"></script>
+  <script src="../calender/assets/ics.js?v=3"></script>
+  <script src="assets/github.js?v=3"></script>
+  <script src="assets/list-editor.js?v=3"></script>
+  <script src="assets/record-editor.js?v=3"></script>
+  <script src="assets/templates.js?v=3"></script>
+  <script src="assets/backup.js?v=3"></script>
+  <script src="assets/editor.js?v=3"></script>
 </body>
 </html>

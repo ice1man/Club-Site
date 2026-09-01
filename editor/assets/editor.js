@@ -27,10 +27,48 @@ function showScreen(name) {
   }
 }
 
+// The canonical template repo every club forks from — hardcoded, since it's
+// what "an update is available" is measured against. Fetched unauthenticated
+// (it's public) so the club's own token is never sent to a third origin.
+const UPSTREAM_OWNER = "ice1man";
+const UPSTREAM_REPO = "Club-Site";
+
+async function checkForUpdate() {
+  const banner = document.getElementById("update-banner");
+  try {
+    const [local, upstreamRes] = await Promise.all([
+      github.getFile("info.json"),
+      fetch(`https://raw.githubusercontent.com/${UPSTREAM_OWNER}/${UPSTREAM_REPO}/main/info.json`),
+    ]);
+    const localVersion = local ? JSON.parse(local.text).version : 0;
+    const upstream = upstreamRes.ok ? await upstreamRes.json() : null;
+
+    if (upstream && upstream.version > localVersion) {
+      banner.innerHTML = "";
+      banner.append(document.createTextNode(
+        `A newer version of Club-Site is available (you have v${localVersion}, latest is v${upstream.version}). ` +
+        "To get new templates and fixes, sync your fork on GitHub (your fork's page → \"Sync fork\"), or see what's changed on ",
+      ));
+      const link = document.createElement("a");
+      link.href = `https://github.com/${UPSTREAM_OWNER}/${UPSTREAM_REPO}`;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = "the original repo";
+      banner.append(link, document.createTextNode("."));
+      banner.hidden = false;
+    } else {
+      banner.hidden = true;
+    }
+  } catch {
+    banner.hidden = true; // don't block the picker on a failed check
+  }
+}
+
 let github;
 
 function openPicker() {
   showScreen("picker");
+  checkForUpdate();
   const list = document.getElementById("template-list");
   list.innerHTML = "Checking your site…";
 
@@ -88,6 +126,13 @@ document.getElementById("back-to-picker").addEventListener("click", openPicker);
 document.getElementById("disconnect").addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
+});
+
+document.getElementById("download-backup").addEventListener("click", () => downloadBackup(github));
+document.getElementById("restore-file").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  e.target.value = ""; // allow re-selecting the same file later
+  if (file) restoreBackup(github, file, document.getElementById("backup-status"));
 });
 
 // Init: pre-fill the connect form, and skip straight to the picker if we
