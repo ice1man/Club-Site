@@ -6,7 +6,7 @@ BEGIN:VEVENT
 UID:2026-08-10-kickoff@club-site.example
 DTSTART;VALUE=DATE:20260810
 SUMMARY:Semester kickoff social
-LOCATION:Student Union, Room 210
+LOCATION:Student Union\, Room 210
 DESCRIPTION:Meet the officers and sign up for committees.
 END:VEVENT
 
@@ -22,7 +22,8 @@ BEGIN:VEVENT
 UID:2026-09-22-workshop@club-site.example
 DTSTART;VALUE=DATE:20260922
 SUMMARY:Beginner workshop
-LOCATION:Library, Room B12
+LOCATION:Library\, Room B12
+DESCRIPTION:testing update time
 END:VEVENT
 
 BEGIN:VEVENT
