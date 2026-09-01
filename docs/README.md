@@ -40,3 +40,20 @@ skip the editor and just edit the files by hand; both paths produce the same com
 
 These are vision-level docs written before the editor app and calendar content exist,
 to guide what gets built next — not a technical spec.
+
+## Cache-busting
+
+Every local `<script src>` / `<link rel="stylesheet" href>` across the site carries a
+`?v=1` query string (e.g. `assets/editor.js?v=1`). There's no build step to hash
+filenames automatically, and this site is served through a CDN (GitHub Pages, plus
+Cloudflare on custom domains) that can hold onto an old copy of a JS/CSS file after a
+change ships — that's exactly what happened once already (the editor briefly looked
+like it only had one template because a browser had cached an old `templates.js`).
+
+**Whenever a `.js` or `.css` file under any `assets/` folder changes, bump `?v=1` to
+`?v=2` (etc.) everywhere it's referenced** — across all HTML pages, not just the one
+that changed, since it's one shared version number by design (simpler to maintain
+than tracking a version per file, at the cost of busting the cache for unchanged
+files too — negligible for a site this size). This does *not* apply to content data
+files (`events.ics`, `admins.json`, `info.json`, `site.json`) — those are expected to
+change often via the editor and should always be fetched fresh.
