@@ -34,4 +34,11 @@ LOCATION:Quad
 DESCRIPTION:Volunteers welcome — sign up on the group chat.
 END:VEVENT
 
+BEGIN:VEVENT
+UID:2027-11-17-happy@club-site
+DTSTART;VALUE=DATE:20271117
+SUMMARY:happy
+DESCRIPTION:be happy
+END:VEVENT
+
 END:VCALENDAR
