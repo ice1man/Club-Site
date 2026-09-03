@@ -57,13 +57,23 @@ LOCATION:Room 204                             (optional)
 DESCRIPTION:Bring your laptop.                 (optional)
 END:VEVENT
 
+BEGIN:VEVENT
+UID:2026-09-22-workshop@club                  (required, stable id for the event)
+DTSTART:20260922T180000                       (required — has a time, see below)
+SUMMARY:Beginner workshop                     (required — event title)
+END:VEVENT
+
 END:VCALENDAR
 ```
 
-- **All-day only, for v1.** `DTSTART` is a bare date (`VALUE=DATE`), not a
-  date-time. No `DTEND`, no timezone handling. Most club events (meetings, socials)
-  read fine as "happening on this day"; time-of-day can be folded into
-  `DESCRIPTION` for now rather than solved properly here.
+- **Time-of-day is optional.** An event with a start time is stored as
+  `DTSTART:YYYYMMDDTHHMMSS` — a floating local time, no `Z` suffix, no
+  `TZID`, seconds always `00`. An event without one keeps the all-day form,
+  `DTSTART;VALUE=DATE:YYYYMMDD`. Either way `DTSTART` is a single point in
+  time, not a span — there's no `DTEND`, and no timezone handling: a time is
+  read and written as-is, in whatever timezone whoever entered it meant (a
+  `Z`-suffixed value found in a hand-edited file is read the same as one
+  without it, not converted).
 - **No recurrence.** Each `VEVENT` is one occurrence. A weekly meeting is entered as
   individual events rather than an `RRULE` — simpler for both the parser and for a
   club member editing by hand.
@@ -72,7 +82,8 @@ END:VCALENDAR
 
 ## Still open
 
-- Whether/when to move past all-day-only events (time-of-day, multi-day events).
+- Multi-day / spanning events (`DTEND`) — still open; each event remains a
+  single point in time, timed or not.
 - Display rules: does the site show past events, or only upcoming? Sort order?
   (Likely upcoming-first, but not decided.)
 - ~~Whether to expose `events.ics` itself as a subscribe link~~ — decided: both

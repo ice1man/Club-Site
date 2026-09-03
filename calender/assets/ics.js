@@ -20,7 +20,16 @@ function parseICS(text) {
       else if (name === "DESCRIPTION") event.description = unescape(value);
       else if (name === "DTSTART") {
         const y = +value.slice(0, 4), m = +value.slice(4, 6), d = +value.slice(6, 8);
-        event.date = new Date(y, m - 1, d);
+        const t = value.indexOf("T");
+        if (t === -1) {
+          event.date = new Date(y, m - 1, d);
+          event.hasTime = false;
+        } else {
+          // Floating local time — a trailing Z (UTC) isn't converted, just ignored.
+          const hh = +value.slice(t + 1, t + 3), mm = +value.slice(t + 3, t + 5);
+          event.date = new Date(y, m - 1, d, hh, mm);
+          event.hasTime = true;
+        }
       }
     }
     return event;
@@ -37,7 +46,11 @@ function serializeICS(events) {
     const stamp = `${e.date.getFullYear()}${pad(e.date.getMonth() + 1)}${pad(e.date.getDate())}`;
     lines.push("BEGIN:VEVENT");
     lines.push(`UID:${e.uid}`);
-    lines.push(`DTSTART;VALUE=DATE:${stamp}`);
+    if (e.hasTime) {
+      lines.push(`DTSTART:${stamp}T${pad(e.date.getHours())}${pad(e.date.getMinutes())}00`);
+    } else {
+      lines.push(`DTSTART;VALUE=DATE:${stamp}`);
+    }
     lines.push(`SUMMARY:${escape(e.summary)}`);
     if (e.location) lines.push(`LOCATION:${escape(e.location)}`);
     if (e.description) lines.push(`DESCRIPTION:${escape(e.description)}`);
