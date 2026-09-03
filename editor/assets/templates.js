@@ -72,7 +72,7 @@ const TEMPLATES = [
   },
   {
     id: "about",
-    name: "About Us",
+    name: "Our Team",
     description: "Club officers: name, role, bio, and photo.",
     dataPath: "about/admins.json",
     // Already ships in every fork of Club-Site — nothing to create.
