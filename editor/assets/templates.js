@@ -104,6 +104,29 @@ const TEMPLATES = [
     }),
   },
   {
+    id: "rewards",
+    name: "Rewards",
+    description: "Recognition and awards given to members: who, what, when, and why.",
+    dataPath: "rewards/awards.json",
+    // Already ships in every fork of Club-Site — nothing to create.
+    scaffold: null,
+
+    renderEditor: (container, ctx) => renderListEditor(container, {
+      github: ctx.github,
+      dataPath: "rewards/awards.json",
+      fields: [
+        { key: "photo", label: "Photo path", type: "text" },
+        { key: "award", label: "Award", type: "text", required: true },
+        { key: "recipient", label: "Recipient", type: "text", required: true },
+        { key: "date", label: "Date", type: "date" },
+        { key: "description", label: "Description", type: "textarea" },
+      ],
+      parse: (text) => JSON.parse(text),
+      serialize: (records) => JSON.stringify(records, null, 2),
+      commitMessage: "Update rewards via editor",
+    }),
+  },
+  {
     id: "site",
     name: "Home Page",
     description: "Site title and whether icons are shown on the home page.",
