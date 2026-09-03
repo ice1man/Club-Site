@@ -14,11 +14,11 @@
 <body>
   <h1 id="site-title">Club Site</h1>
   <div class="links">
-    <a href="who-we-are/index.html"><span class="icon">🏛️</span>Who We Are</a>
-    <a href="calender/index.html"><span class="icon">📅</span>Calender</a>
-    <a href="about/index.html"><span class="icon">👥</span>Our Team</a>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScT0h3Ph6hrFQA-VgD-CpNsoy3BcX07mN5oRUob7Sc38rM9gg/viewform?usp=publish-editor" target="_blank" rel="noopener"><span class="icon">📝</span>Feedback</a>
-    <a href="rewards/index.html"><span class="icon">🏆</span>Rewards</a>
+    <a data-page="who-we-are" href="who-we-are/index.html"><span class="icon">🏛️</span>Who We Are</a>
+    <a data-page="calender" href="calender/index.html"><span class="icon">📅</span>Calender</a>
+    <a data-page="about" href="about/index.html"><span class="icon">👥</span>Our Team</a>
+    <a data-page="feedback" href="https://docs.google.com/forms/d/e/1FAIpQLScT0h3Ph6hrFQA-VgD-CpNsoy3BcX07mN5oRUob7Sc38rM9gg/viewform?usp=publish-editor" target="_blank" rel="noopener"><span class="icon">📝</span>Feedback</a>
+    <a data-page="rewards" href="rewards/index.html"><span class="icon">🏆</span>Rewards</a>
   </div>
   <script>
     fetch("site.json").then((r) => r.json()).then((site) => {
@@ -28,6 +28,18 @@
       }
       if (site.showIcons === false) {
         document.querySelectorAll(".icon").forEach((el) => el.style.display = "none");
+      }
+      const hidden = {
+        "who-we-are": site.hideWhoWeAre,
+        "calender": site.hideCalender,
+        "about": site.hideAbout,
+        "rewards": site.hideRewards,
+        "feedback": site.hideFeedback,
+      };
+      for (const [page, isHidden] of Object.entries(hidden)) {
+        if (!isHidden) continue;
+        const tile = document.querySelector(`.links a[data-page="${page}"]`);
+        if (tile) tile.style.display = "none";
       }
     }).catch(() => {}); // keep the hardcoded defaults above if this fails
   </script>

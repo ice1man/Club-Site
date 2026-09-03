@@ -139,7 +139,7 @@ const TEMPLATES = [
   {
     id: "site",
     name: "Home Page",
-    description: "Site title and whether icons are shown on the home page.",
+    description: "Site title, icon visibility, and which home page tiles are shown.",
     dataPath: "site.json",
     // Already ships in every fork of Club-Site — nothing to create.
     scaffold: null,
@@ -150,6 +150,11 @@ const TEMPLATES = [
       fields: [
         { key: "title", label: "Site title", type: "text", required: true },
         { key: "showIcons", label: "Show icons", type: "checkbox" },
+        { key: "hideWhoWeAre", label: "Hide Who We Are page", type: "checkbox" },
+        { key: "hideCalender", label: "Hide Calendar page", type: "checkbox" },
+        { key: "hideAbout", label: "Hide Our Team page", type: "checkbox" },
+        { key: "hideRewards", label: "Hide Rewards page", type: "checkbox" },
+        { key: "hideFeedback", label: "Hide Feedback link", type: "checkbox" },
       ],
       parse: (text) => JSON.parse(text),
       serialize: (record) => JSON.stringify(record, null, 2),
