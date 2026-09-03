@@ -1,4 +1,9 @@
 {
-  "title": "Fbla",
-  "showIcons": true
+  "title": "Club Site",
+  "showIcons": true,
+  "hideWhoWeAre": false,
+  "hideCalender": false,
+  "hideAbout": false,
+  "hideRewards": false,
+  "hideFeedback": false
 }
