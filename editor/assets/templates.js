@@ -20,6 +20,11 @@ function dateToInputValue(date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
+function timeToInputValue(date) {
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 const TEMPLATES = [
   {
     id: "calender",
@@ -34,6 +39,7 @@ const TEMPLATES = [
       dataPath: "calender/events.ics",
       fields: [
         { key: "date", label: "Date", type: "date", required: true },
+        { key: "time", label: "Time", type: "time" },
         { key: "summary", label: "Event title", type: "text", required: true },
         { key: "location", label: "Location", type: "text" },
         { key: "description", label: "Description", type: "text" },
@@ -44,14 +50,18 @@ const TEMPLATES = [
       generateId: (record, taken) => makeUid(record.date, record.summary, taken),
       toValues: (record) => ({
         date: record.date ? dateToInputValue(record.date) : "",
+        time: record.hasTime ? timeToInputValue(record.date) : "",
         summary: record.summary || "",
         location: record.location || "",
         description: record.description || "",
       }),
       fromValues: (values) => {
         const [y, m, d] = values.date.split("-").map(Number);
+        const hasTime = !!values.time;
+        const [hh, mm] = hasTime ? values.time.split(":").map(Number) : [0, 0];
         return {
-          date: new Date(y, m - 1, d),
+          date: new Date(y, m - 1, d, hh, mm),
+          hasTime,
           summary: values.summary,
           location: values.location,
           description: values.description,

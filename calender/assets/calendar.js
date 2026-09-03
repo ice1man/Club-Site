@@ -43,6 +43,11 @@ async function renderEvents(mode) {
     date.textContent = e.date.toLocaleDateString(undefined, {
       weekday: "short", month: "short", day: "numeric", year: "numeric",
     });
+    if (e.hasTime) {
+      date.textContent += " · " + e.date.toLocaleTimeString(undefined, {
+        hour: "numeric", minute: "2-digit",
+      });
+    }
     li.append(date);
 
     const summary = document.createElement("span");
