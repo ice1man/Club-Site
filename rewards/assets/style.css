@@ -1,0 +1,35 @@
+#rewards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1.5rem;
+}
+
+.award-card {
+  text-align: center;
+}
+
+.award-card img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+}
+
+.award-card h3 {
+  margin: 0.75rem 0 0;
+}
+
+.recipient {
+  font-size: 0.95rem;
+  margin: 0.1rem 0 0;
+}
+
+.date {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0.1rem 0 0.5rem;
+}
+
+.description {
+  font-size: 0.9rem;
+  margin: 0;
+}

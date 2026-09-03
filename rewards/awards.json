@@ -1,0 +1,16 @@
+[
+  {
+    "photo": "assets/trophy.svg",
+    "award": "Member of the Month",
+    "recipient": "Jane Doe",
+    "date": "2026-09-01",
+    "description": "Recognized for organizing the semester kickoff social and welcoming new members."
+  },
+  {
+    "photo": "assets/trophy.svg",
+    "award": "Most Improved",
+    "recipient": "Alex Kim",
+    "date": "2026-08-01",
+    "description": "Went from first meeting to running the beginner workshop in under a semester."
+  }
+]
