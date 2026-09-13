@@ -11,6 +11,9 @@
   .links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3rem; padding: 2rem; border-radius: 12px; }
   a { text-decoration: none; text-align: center; color: inherit; }
   .icon { display: block; font-size: 6rem; }
+  /* A custom icon image starts hidden — JS only shows it once site.json supplies a
+     path, so an unset <img> never renders as a broken-image glyph. */
+  img.icon { display: none; width: 6rem; height: 6rem; object-fit: contain; }
   #site-logo { max-width: min(100%, 18rem); max-height: 9rem; }
 </style>
 </head>
@@ -18,11 +21,11 @@
   <img id="site-logo" alt="" hidden>
   <h1 id="site-title">Club Site</h1>
   <div class="links">
-    <a data-page="who-we-are" href="who-we-are/index.html"><span class="icon">🏛️</span>Who We Are</a>
-    <a data-page="calender" href="calender/index.html"><span class="icon">📅</span>Calender</a>
-    <a data-page="about" href="about/index.html"><span class="icon">👥</span>Our Team</a>
-    <a data-page="feedback" href="https://docs.google.com/forms/d/e/1FAIpQLScT0h3Ph6hrFQA-VgD-CpNsoy3BcX07mN5oRUob7Sc38rM9gg/viewform?usp=publish-editor" target="_blank" rel="noopener"><span class="icon">📝</span>Feedback</a>
-    <a data-page="rewards" href="rewards/index.html"><span class="icon">🏆</span>Rewards</a>
+    <a data-page="who-we-are" href="who-we-are/index.html"><span class="icon">🏛️</span><img class="icon" alt="">Who We Are</a>
+    <a data-page="calender" href="calender/index.html"><span class="icon">📅</span><img class="icon" alt="">Calender</a>
+    <a data-page="about" href="about/index.html"><span class="icon">👥</span><img class="icon" alt="">Our Team</a>
+    <a data-page="feedback" href="https://docs.google.com/forms/d/e/1FAIpQLScT0h3Ph6hrFQA-VgD-CpNsoy3BcX07mN5oRUob7Sc38rM9gg/viewform?usp=publish-editor" target="_blank" rel="noopener"><span class="icon">📝</span><img class="icon" alt="">Feedback</a>
+    <a data-page="rewards" href="rewards/index.html"><span class="icon">🏆</span><img class="icon" alt="">Rewards</a>
   </div>
   <script>
     fetch("site.json").then((r) => r.json()).then((site) => {
@@ -30,7 +33,28 @@
         document.title = site.title;
         document.getElementById("site-title").textContent = site.title;
       }
+      const icons = {
+        "who-we-are": site.iconWhoWeAre,
+        "calender": site.iconCalender,
+        "about": site.iconAbout,
+        "rewards": site.iconRewards,
+        "feedback": site.iconFeedback,
+      };
+      for (const [page, src] of Object.entries(icons)) {
+        if (!src) continue;
+        const tile = document.querySelector(`.links a[data-page="${page}"]`);
+        if (!tile) continue;
+        const span = tile.querySelector("span.icon");
+        const img = tile.querySelector("img.icon");
+        if (span) span.style.display = "none";
+        if (img) {
+          img.src = src;
+          img.style.display = "block";
+        }
+      }
       if (site.showIcons === false) {
+        // Runs after the custom-icon swap above so "hide icons" always wins, even
+        // for a tile that just got switched to a custom image.
         document.querySelectorAll(".icon").forEach((el) => el.style.display = "none");
       }
       if (site.logo) {
