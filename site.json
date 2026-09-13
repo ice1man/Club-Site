@@ -1,6 +1,10 @@
 {
   "title": "Club Site",
   "showIcons": true,
+  "logo": "",
+  "showLinksBox": true,
+  "linksBackground": "#1a5fb4",
+  "linksBorder": "#ffffff",
   "hideWhoWeAre": false,
   "hideCalender": false,
   "hideAbout": false,
