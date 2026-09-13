@@ -19,6 +19,15 @@ input[type="text"], input[type="password"], input[type="date"], textarea {
   border-radius: 4px;
 }
 
+/* A bare color swatch renders tiny — size it like the other inputs. */
+input[type="color"] {
+  width: 4rem;
+  height: 2.2rem;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 textarea {
   resize: vertical;
   min-height: 2.4rem;

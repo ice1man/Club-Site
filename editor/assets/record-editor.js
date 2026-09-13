@@ -3,7 +3,12 @@
 // but for a single JSON object instead of an array of records (e.g.
 // who-we-are/info.json or site.json, vs. calendar events or admins).
 // Field types: "text", "textarea", "lines" (textarea <-> string array,
-// one entry per non-empty line), "checkbox" (boolean).
+// one entry per non-empty line), "checkbox" (boolean), "color" (hex string —
+// give the field a `default`, since an empty color input reads as #000000).
+
+// Field types backed by an <input> and the type= they use; everything else
+// renders as a <textarea>.
+const INPUT_TYPES = { text: "text", checkbox: "checkbox", color: "color" };
 
 async function renderRecordEditor(container, config) {
   const { github, dataPath, fields, parse, serialize, commitMessage } = config;
@@ -31,18 +36,19 @@ async function renderRecordEditor(container, config) {
   for (const f of fields) {
     const label = document.createElement("label");
     const isCheckbox = f.type === "checkbox";
-    const input = document.createElement(f.type === "text" || isCheckbox ? "input" : "textarea");
+    const inputType = INPUT_TYPES[f.type];
+    const input = document.createElement(inputType ? "input" : "textarea");
+    if (inputType) input.type = inputType;
     input.className = `f-${f.key}`;
 
     if (isCheckbox) {
       label.className = "checkbox-field";
-      input.type = "checkbox";
       input.checked = !!record[f.key];
       label.append(input, document.createTextNode(f.label));
     } else {
       label.textContent = f.label + (f.required ? "" : " (optional)");
-      if (f.type === "text") input.type = "text";
-      input.value = f.type === "lines" ? (record[f.key] || []).join("\n") : (record[f.key] || "");
+      if (f.type === "lines") input.value = (record[f.key] || []).join("\n");
+      else input.value = record[f.key] || f.default || "";
       label.append(input);
     }
 

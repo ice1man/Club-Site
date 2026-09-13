@@ -5,13 +5,17 @@
 <title>Club Site</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%91%A5</text></svg>">
 <style>
-  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; height: 100vh; margin: 0; font-family: sans-serif; }
-  .links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3rem; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; min-height: 100vh; margin: 0; padding: 2rem 1rem; box-sizing: border-box; font-family: sans-serif; }
+  /* The border is transparent and the colors unset until site.json turns the box
+     on, so an untouched site looks exactly as it did before. */
+  .links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3rem; padding: 2rem; border: 2px solid transparent; border-radius: 12px; }
   a { text-decoration: none; text-align: center; color: inherit; }
   .icon { display: block; font-size: 6rem; }
+  #site-logo { max-width: min(100%, 18rem); max-height: 9rem; }
 </style>
 </head>
 <body>
+  <img id="site-logo" alt="" hidden>
   <h1 id="site-title">Club Site</h1>
   <div class="links">
     <a data-page="who-we-are" href="who-we-are/index.html"><span class="icon">🏛️</span>Who We Are</a>
@@ -28,6 +32,19 @@
       }
       if (site.showIcons === false) {
         document.querySelectorAll(".icon").forEach((el) => el.style.display = "none");
+      }
+      if (site.logo) {
+        const logo = document.getElementById("site-logo");
+        logo.src = site.logo;
+        logo.hidden = false;
+      }
+      if (site.showLinksBox) {
+        // Set the longhand properties, not the `background`/`border` shorthands, so a
+        // hand-edited site.json can only ever supply a color here — anything else the
+        // CSSOM just drops.
+        const links = document.querySelector(".links");
+        if (site.linksBackground) links.style.backgroundColor = site.linksBackground;
+        if (site.linksBorder) links.style.borderColor = site.linksBorder;
       }
       const hidden = {
         "who-we-are": site.hideWhoWeAre,

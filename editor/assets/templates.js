@@ -139,7 +139,7 @@ const TEMPLATES = [
   {
     id: "site",
     name: "Home Page",
-    description: "Site title, icon visibility, and which home page tiles are shown.",
+    description: "Site title, logo, icon visibility, tile colors, and which home page tiles are shown.",
     dataPath: "site.json",
     // Already ships in every fork of Club-Site — nothing to create.
     scaffold: null,
@@ -150,6 +150,10 @@ const TEMPLATES = [
       fields: [
         { key: "title", label: "Site title", type: "text", required: true },
         { key: "showIcons", label: "Show icons", type: "checkbox" },
+        { key: "logo", label: "Logo image path", type: "text" },
+        { key: "showLinksBox", label: "Draw a box around the options", type: "checkbox" },
+        { key: "linksBackground", label: "Box background color", type: "color", default: "#ffffff" },
+        { key: "linksBorder", label: "Box border color", type: "color", default: "#333333" },
         { key: "hideWhoWeAre", label: "Hide Who We Are page", type: "checkbox" },
         { key: "hideCalender", label: "Hide Calendar page", type: "checkbox" },
         { key: "hideAbout", label: "Hide Our Team page", type: "checkbox" },
