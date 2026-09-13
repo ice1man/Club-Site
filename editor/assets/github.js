@@ -47,15 +47,47 @@ class GitHubClient {
   // Creates or updates a file — this call itself is the commit. Omit `sha`
   // when creating a new file; pass the `sha` from getFile() when updating one.
   async putFile(path, text, sha, message) {
+    return this.#putContent(path, b64EncodeUtf8(text), sha, message);
+  }
+
+  // Same as putFile, but for content that's already base64 (e.g. straight off
+  // FileReader.readAsDataURL, prefix stripped) — skips the UTF-8 text encoding
+  // putFile does, which would corrupt binary data like an image.
+  async putBinaryFile(path, base64Content, sha, message) {
+    return this.#putContent(path, base64Content, sha, message);
+  }
+
+  async #putContent(path, base64Content, sha, message) {
     const res = await this.#request(`contents/${path}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message,
-        content: b64EncodeUtf8(text),
+        content: base64Content,
         branch: this.branch,
         ...(sha ? { sha } : {}),
       }),
+    });
+    if (!res.ok) throw await githubError(res);
+    return res.json();
+  }
+
+  // Lists a directory's entries ({ name, path, sha, size, download_url }), or
+  // [] if the folder doesn't exist yet — an empty assets/ folder in a fresh
+  // fork isn't an error, the first upload creates it.
+  async listDir(path) {
+    const res = await this.#request(`contents/${path}?ref=${this.branch}`);
+    if (res.status === 404) return [];
+    if (!res.ok) throw await githubError(res);
+    return res.json();
+  }
+
+  // Deletes a file — this call itself is the commit.
+  async deleteFile(path, sha, message) {
+    const res = await this.#request(`contents/${path}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, sha, branch: this.branch }),
     });
     if (!res.ok) throw await githubError(res);
     return res.json();
