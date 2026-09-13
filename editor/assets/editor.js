@@ -69,11 +69,12 @@ let github;
 function openPicker() {
   showScreen("picker");
   checkForUpdate();
-  renderAssetList(document.getElementById("asset-list"), github);
   const list = document.getElementById("template-list");
   list.innerHTML = "Checking your site…";
 
-  Promise.all(TEMPLATES.map((t) => github.getFile(t.dataPath).catch(() => null)))
+  // A template with no dataPath (e.g. Assets) has no single file to probe for
+  // presence — it's always available, so its "check" is just a resolved marker.
+  Promise.all(TEMPLATES.map((t) => t.dataPath ? github.getFile(t.dataPath).catch(() => null) : Promise.resolve(true)))
     .then((results) => {
       list.innerHTML = "";
       TEMPLATES.forEach((template, i) => {
@@ -89,7 +90,7 @@ function openPicker() {
         const button = document.createElement("button");
         button.type = "button";
         if (present) {
-          button.textContent = "Edit";
+          button.textContent = template.actionLabel || "Edit";
         } else if (template.scaffold) {
           button.textContent = "Add to your site";
         } else {
@@ -127,14 +128,6 @@ document.getElementById("back-to-picker").addEventListener("click", openPicker);
 document.getElementById("disconnect").addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
-});
-
-document.getElementById("asset-upload").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  e.target.value = ""; // allow re-selecting the same file later
-  if (!file) return;
-  const statusEl = document.getElementById("asset-upload-status");
-  uploadAsset(github, file, statusEl).then(() => renderAssetList(document.getElementById("asset-list"), github));
 });
 
 document.getElementById("download-backup").addEventListener("click", () => downloadBackup(github));

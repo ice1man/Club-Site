@@ -6,6 +6,7 @@
 async function downloadBackup(github) {
   const files = {};
   for (const t of TEMPLATES) {
+    if (!t.dataPath) continue; // e.g. Assets — no single data file to back up here
     const file = await github.getFile(t.dataPath).catch(() => null);
     if (file) files[t.dataPath] = file.text;
   }
