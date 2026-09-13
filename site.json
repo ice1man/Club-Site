@@ -2,13 +2,20 @@
   "title": "FBLA - Lake Norman",
   "showIcons": true,
   "logo": "assets/logo.png",
+  "logoBackground": "#ffffff",
   "customColors": true,
-  "pageBackground": "#1a5fb4",
+  "pageBackground": "#25377b",
   "linksBackground": "#ffffff",
   "titleColor": "#ffffff",
+  "linksTextColor": "#000000",
   "hideWhoWeAre": false,
+  "iconWhoWeAre": "",
   "hideCalender": false,
+  "iconCalender": "",
   "hideAbout": false,
+  "iconAbout": "",
   "hideRewards": false,
-  "hideFeedback": false
+  "iconRewards": "",
+  "hideFeedback": false,
+  "iconFeedback": ""
 }
