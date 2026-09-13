@@ -68,7 +68,10 @@
         // CSSOM just drops.
         if (site.pageBackground) document.body.style.backgroundColor = site.pageBackground;
         if (site.linksBackground) document.querySelector(".links").style.backgroundColor = site.linksBackground;
-        if (site.textColor) document.body.style.color = site.textColor;
+        if (site.titleColor) document.getElementById("site-title").style.color = site.titleColor;
+        if (site.linksTextColor) {
+          document.querySelectorAll(".links a").forEach((a) => a.style.color = site.linksTextColor);
+        }
       }
       const hidden = {
         "who-we-are": site.hideWhoWeAre,
