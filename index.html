@@ -14,7 +14,9 @@
   /* A custom icon image starts hidden — JS only shows it once site.json supplies a
      path, so an unset <img> never renders as a broken-image glyph. */
   img.icon { display: none; width: 6rem; height: 6rem; object-fit: contain; }
-  #site-logo { max-width: min(100%, 18rem); max-height: 9rem; }
+  /* Padding/radius are invisible until site.json sets a background, matching
+     the same trick used for .links. */
+  #site-logo { max-width: min(100%, 28rem); max-height: 14rem; padding: 0.5rem 1rem; border-radius: 12px; }
 </style>
 </head>
 <body>
@@ -68,6 +70,7 @@
         // CSSOM just drops.
         if (site.pageBackground) document.body.style.backgroundColor = site.pageBackground;
         if (site.linksBackground) document.querySelector(".links").style.backgroundColor = site.linksBackground;
+        if (site.logoBackground) document.getElementById("site-logo").style.backgroundColor = site.logoBackground;
         if (site.titleColor) document.getElementById("site-title").style.color = site.titleColor;
         if (site.linksTextColor) {
           document.querySelectorAll(".links a").forEach((a) => a.style.color = site.linksTextColor);
