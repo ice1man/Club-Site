@@ -151,6 +151,7 @@ const TEMPLATES = [
         { key: "title", label: "Site title", type: "text", required: true },
         { key: "showIcons", label: "Show icons", type: "checkbox" },
         { key: "logo", label: "Logo image path", type: "text" },
+        { key: "logoBackground", label: "Logo background color", type: "color", default: "#ffffff" },
         { key: "customColors", label: "Customize page colors", type: "checkbox" },
         { key: "pageBackground", label: "Page background color", type: "color", default: "#ffffff" },
         { key: "linksBackground", label: "Options box background color", type: "color", default: "#ffffff" },
