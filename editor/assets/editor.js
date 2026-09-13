@@ -69,6 +69,7 @@ let github;
 function openPicker() {
   showScreen("picker");
   checkForUpdate();
+  renderAssetList(document.getElementById("asset-list"), github);
   const list = document.getElementById("template-list");
   list.innerHTML = "Checking your site…";
 
@@ -126,6 +127,14 @@ document.getElementById("back-to-picker").addEventListener("click", openPicker);
 document.getElementById("disconnect").addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
+});
+
+document.getElementById("asset-upload").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  e.target.value = ""; // allow re-selecting the same file later
+  if (!file) return;
+  const statusEl = document.getElementById("asset-upload-status");
+  uploadAsset(github, file, statusEl).then(() => renderAssetList(document.getElementById("asset-list"), github));
 });
 
 document.getElementById("download-backup").addEventListener("click", () => downloadBackup(github));
