@@ -1,7 +1,8 @@
 // Browse/upload/delete UI for the root assets/ folder — the one site.json's
-// logo/iconX fields and every other "photo path" field point into. Sibling to
-// backup.js: same shape (a render function plus a mutating action, wired up
-// from editor.js), but for files instead of one JSON record.
+// logo/iconX fields and every other "photo path" field point into. Self-contained
+// like record-editor.js/list-editor.js: renderAssetManager(container, ctx) is the
+// TEMPLATES entry point (see templates.js), building its own list/upload/status
+// markup rather than relying on static HTML.
 
 const ASSETS_DIR = "assets";
 const MAX_ASSET_BYTES = 1_000_000; // the Contents API isn't meant for large payloads
@@ -133,4 +134,39 @@ async function uploadAsset(github, file, statusEl) {
   } catch (err) {
     statusEl.textContent = err.message;
   }
+}
+
+// TEMPLATES entry point (see templates.js) — builds the whole Assets page into
+// whatever container editor.js's openTemplate() hands it.
+function renderAssetManager(container, ctx) {
+  const { github } = ctx;
+  container.innerHTML = "";
+  container.className = "asset-manager";
+
+  const help = document.createElement("p");
+  help.className = "help";
+  help.textContent = "Upload images here, then copy the path into a photo/logo/icon field elsewhere in the editor.";
+
+  const listContainer = document.createElement("div");
+
+  const uploadLabel = document.createElement("label");
+  uploadLabel.textContent = "Upload a file";
+  const uploadInput = document.createElement("input");
+  uploadInput.type = "file";
+  uploadInput.accept = "image/*";
+  uploadLabel.append(uploadInput);
+
+  const uploadStatus = document.createElement("div");
+  uploadStatus.className = "status";
+
+  container.append(help, listContainer, uploadLabel, uploadStatus);
+
+  renderAssetList(listContainer, github);
+
+  uploadInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file) return;
+    uploadAsset(github, file, uploadStatus).then(() => renderAssetList(listContainer, github));
+  });
 }

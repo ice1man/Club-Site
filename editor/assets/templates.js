@@ -173,4 +173,16 @@ const TEMPLATES = [
       commitMessage: "Update home page via editor",
     }),
   },
+  {
+    id: "assets",
+    name: "Assets",
+    description: "Upload, browse, and delete images used across your site.",
+    // No single data file to check for — always available, not something to
+    // scaffold. See the dataPath-less handling in editor.js/backup.js.
+    dataPath: null,
+    scaffold: null,
+    actionLabel: "Manage",
+
+    renderEditor: (container, ctx) => renderAssetManager(container, ctx),
+  },
 ];
