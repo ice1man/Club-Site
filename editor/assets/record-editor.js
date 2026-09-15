@@ -86,7 +86,8 @@ async function renderRecordEditor(container, config) {
     saveButton.disabled = true;
     saveStatus.textContent = "Saving…";
     try {
-      await github.putFile(dataPath, serialize(newRecord), file ? file.sha : undefined, commitMessage);
+      const result = await github.putFile(dataPath, serialize(newRecord), file ? file.sha : undefined, commitMessage);
+      file = { text: serialize(newRecord), sha: result.content.sha };
       saveStatus.textContent = "Saved. GitHub Pages will redeploy shortly.";
     } catch (err) {
       saveStatus.textContent = err.message;
