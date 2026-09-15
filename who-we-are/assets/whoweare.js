@@ -1,3 +1,12 @@
+// Photo path fields are root-relative (the editor's Asset Manager uploads
+// into the site-root assets/ folder), but this page lives one directory
+// below the root — so a plain relative path needs a "../" to resolve there.
+function toAssetUrl(path) {
+  if (!path) return path;
+  if (/^([a-z]+:)?\/\//i.test(path) || path.startsWith("data:") || path.startsWith("/")) return path;
+  return `../${path}`;
+}
+
 // Fetches info.json and renders the photo, mission, and reasons.
 async function renderWhoWeAre() {
   const container = document.getElementById("who-we-are");
@@ -14,7 +23,7 @@ async function renderWhoWeAre() {
   if (info.photo) {
     const photo = document.createElement("img");
     photo.className = "club-photo";
-    photo.src = info.photo;
+    photo.src = toAssetUrl(info.photo);
     photo.alt = "Club photo";
     container.append(photo);
   }

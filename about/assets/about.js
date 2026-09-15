@@ -1,3 +1,12 @@
+// Photo path fields are root-relative (the editor's Asset Manager uploads
+// into the site-root assets/ folder), but this page lives one directory
+// below the root — so a plain relative path needs a "../" to resolve there.
+function toAssetUrl(path) {
+  if (!path) return path;
+  if (/^([a-z]+:)?\/\//i.test(path) || path.startsWith("data:") || path.startsWith("/")) return path;
+  return `../${path}`;
+}
+
 // Fetches admins.json and renders one card per admin into #admins.
 async function renderAdmins() {
   const list = document.getElementById("admins");
@@ -16,7 +25,7 @@ async function renderAdmins() {
     card.className = "admin-card";
 
     const photo = document.createElement("img");
-    photo.src = a.photo;
+    photo.src = toAssetUrl(a.photo);
     photo.alt = a.name;
     card.append(photo);
 
