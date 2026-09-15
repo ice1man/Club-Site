@@ -6,7 +6,7 @@
 async function renderListEditor(container, config) {
   const {
     github, dataPath, fields, parse, serialize, commitMessage,
-    idKey, generateId, toValues, fromValues,
+    idKey, generateId, toValues, fromValues, reorder, prependNew,
   } = config;
 
   container.innerHTML = "";
@@ -29,7 +29,7 @@ async function renderListEditor(container, config) {
   list.className = "record-list";
   const taken = new Set(idKey ? records.map((r) => r[idKey]) : []);
 
-  function addRow(record) {
+  function addRow(record, { prepend } = {}) {
     const row = document.createElement("div");
     row.className = "record-row";
     row._inputs = {};
@@ -47,6 +47,30 @@ async function renderListEditor(container, config) {
 
     if (idKey && record[idKey]) row._id = record[idKey];
 
+    if (reorder) {
+      const moveUpButton = document.createElement("button");
+      moveUpButton.type = "button";
+      moveUpButton.className = "move-record move-up";
+      moveUpButton.textContent = "▲";
+      moveUpButton.title = "Move up";
+      moveUpButton.addEventListener("click", () => {
+        const prev = row.previousElementSibling;
+        if (prev) list.insertBefore(row, prev);
+      });
+      row.append(moveUpButton);
+
+      const moveDownButton = document.createElement("button");
+      moveDownButton.type = "button";
+      moveDownButton.className = "move-record move-down";
+      moveDownButton.textContent = "▼";
+      moveDownButton.title = "Move down";
+      moveDownButton.addEventListener("click", () => {
+        const next = row.nextElementSibling;
+        if (next) list.insertBefore(next, row);
+      });
+      row.append(moveDownButton);
+    }
+
     const removeButton = document.createElement("button");
     removeButton.type = "button";
     removeButton.className = "remove-record";
@@ -54,7 +78,7 @@ async function renderListEditor(container, config) {
     removeButton.addEventListener("click", () => row.remove());
     row.append(removeButton);
 
-    list.append(row);
+    if (prepend) list.prepend(row); else list.append(row);
   }
 
   for (const r of records) addRow(r);
@@ -62,7 +86,7 @@ async function renderListEditor(container, config) {
   const addButton = document.createElement("button");
   addButton.type = "button";
   addButton.textContent = "+ Add";
-  addButton.addEventListener("click", () => addRow({}));
+  addButton.addEventListener("click", () => addRow({}, { prepend: !!prependNew }));
 
   const saveButton = document.createElement("button");
   saveButton.type = "button";

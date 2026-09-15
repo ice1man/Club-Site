@@ -92,6 +92,11 @@ button:disabled {
   flex: 0 1 9rem;
 }
 
+.record-row .move-record {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.5rem;
+}
+
 .record-list {
   margin-bottom: 1rem;
 }

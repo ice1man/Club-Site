@@ -90,6 +90,7 @@ const TEMPLATES = [
       parse: (text) => JSON.parse(text),
       serialize: (records) => JSON.stringify(records, null, 2),
       commitMessage: "Update admins via editor",
+      reorder: true,
     }),
   },
   {
@@ -134,6 +135,8 @@ const TEMPLATES = [
       parse: (text) => JSON.parse(text),
       serialize: (records) => JSON.stringify(records, null, 2),
       commitMessage: "Update rewards via editor",
+      reorder: true,
+      prependNew: true,
     }),
   },
   {
