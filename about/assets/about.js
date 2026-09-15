@@ -7,6 +7,9 @@ function toAssetUrl(path) {
   return `../${path}`;
 }
 
+// Generic "missing person" glyph shown when an admin has no photo set.
+const MISSING_PHOTO_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2.5c-3.34 0-10 1.68-10 5v2.5h20V19.5c0-3.32-6.66-5-10-5z"/></svg>';
+
 // Fetches admins.json and renders one card per admin into #admins.
 async function renderAdmins() {
   const list = document.getElementById("admins");
@@ -24,9 +27,18 @@ async function renderAdmins() {
     const card = document.createElement("div");
     card.className = "admin-card";
 
-    const photo = document.createElement("img");
-    photo.src = toAssetUrl(a.photo);
-    photo.alt = a.name;
+    let photo;
+    if (a.photo) {
+      photo = document.createElement("img");
+      photo.src = toAssetUrl(a.photo);
+      photo.alt = a.name;
+    } else {
+      photo = document.createElement("div");
+      photo.className = "admin-photo-placeholder";
+      photo.setAttribute("role", "img");
+      photo.setAttribute("aria-label", `${a.name} (no photo)`);
+      photo.innerHTML = MISSING_PHOTO_SVG;
+    }
     card.append(photo);
 
     const name = document.createElement("h3");

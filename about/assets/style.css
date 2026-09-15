@@ -8,10 +8,30 @@
   text-align: center;
 }
 
-.admin-card img {
+.admin-card img,
+.admin-card .admin-photo-placeholder {
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
+}
+
+.admin-card img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.admin-card .admin-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  background: #e8e8e8;
+  color: #999;
+}
+
+.admin-card .admin-photo-placeholder svg {
+  width: 55%;
+  height: 55%;
 }
 
 .admin-card h3 {
