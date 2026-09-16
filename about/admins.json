@@ -1,12 +1,6 @@
 [
   {
     "photo": "",
-    "name": "Liam Dumbrigue",
-    "role": "Copresident",
-    "bio": ""
-  },
-  {
-    "photo": "",
     "name": "Kathryn Cogdell",
     "role": "Adviser",
     "bio": "Primary Adviser of Lake Norman High School, State District Leader of NC_Northwest_High, State District Leader & Regional Board Member of NC_Northwest_Middle"
@@ -15,6 +9,12 @@
     "photo": "",
     "name": "Erica Davis",
     "role": "Co-Adviser",
+    "bio": ""
+  },
+  {
+    "photo": "",
+    "name": "Liam Dumbrigue",
+    "role": "Copresident",
     "bio": ""
   }
 ]
