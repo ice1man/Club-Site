@@ -6,7 +6,7 @@
 async function renderListEditor(container, config) {
   const {
     github, dataPath, fields, parse, serialize, commitMessage,
-    idKey, generateId, toValues, fromValues, reorder, prependNew,
+    idKey, generateId, toValues, fromValues, reorder, prependNew, repeat,
   } = config;
 
   container.innerHTML = "";
@@ -29,7 +29,7 @@ async function renderListEditor(container, config) {
   list.className = "record-list";
   const taken = new Set(idKey ? records.map((r) => r[idKey]) : []);
 
-  function addRow(record, { prepend } = {}) {
+  function addRow(record, { prepend, repeat: repeatSpec } = {}) {
     const row = document.createElement("div");
     row.className = "record-row";
     row._inputs = {};
@@ -46,6 +46,27 @@ async function renderListEditor(container, config) {
     }
 
     if (idKey && record[idKey]) row._id = record[idKey];
+
+    if (repeatSpec) {
+      row._repeat = repeatSpec;
+      const freq = repeat && repeat.frequencies.find((f) => f.value === repeatSpec.frequency);
+      const badge = document.createElement("span");
+      badge.className = "repeat-badge";
+      badge.textContent = `Repeats ${freq ? freq.label.toLowerCase() : repeatSpec.frequency} until ${repeatSpec.until}`;
+
+      const clearRepeatButton = document.createElement("button");
+      clearRepeatButton.type = "button";
+      clearRepeatButton.className = "clear-repeat";
+      clearRepeatButton.textContent = "×";
+      clearRepeatButton.title = "Don't repeat this event";
+      clearRepeatButton.addEventListener("click", () => {
+        row._repeat = null;
+        badge.remove();
+        clearRepeatButton.remove();
+      });
+
+      row.append(badge, clearRepeatButton);
+    }
 
     if (reorder) {
       const moveUpButton = document.createElement("button");
@@ -88,6 +109,48 @@ async function renderListEditor(container, config) {
   addButton.textContent = "+ Add";
   addButton.addEventListener("click", () => addRow({}, { prepend: !!prependNew }));
 
+  let repeatControls = null;
+  if (repeat) {
+    const frequencySelect = document.createElement("select");
+    frequencySelect.className = "repeat-frequency";
+    const blankOption = document.createElement("option");
+    blankOption.value = "";
+    blankOption.textContent = "Repeat…";
+    frequencySelect.append(blankOption);
+    for (const f of repeat.frequencies) {
+      const option = document.createElement("option");
+      option.value = f.value;
+      option.textContent = f.label;
+      frequencySelect.append(option);
+    }
+
+    const untilInput = document.createElement("input");
+    untilInput.type = "date";
+    untilInput.className = "repeat-until";
+
+    const repeatStatus = document.createElement("span");
+    repeatStatus.className = "status";
+
+    const addRepeatingButton = document.createElement("button");
+    addRepeatingButton.type = "button";
+    addRepeatingButton.textContent = "+ Add repeating event";
+    addRepeatingButton.addEventListener("click", () => {
+      if (!frequencySelect.value || !untilInput.value) {
+        repeatStatus.textContent = "Pick a frequency and an until date first.";
+        return;
+      }
+      repeatStatus.textContent = "";
+      addRow({}, {
+        prepend: !!prependNew,
+        repeat: { frequency: frequencySelect.value, until: untilInput.value },
+      });
+    });
+
+    repeatControls = document.createElement("div");
+    repeatControls.className = "repeat-controls";
+    repeatControls.append(frequencySelect, untilInput, addRepeatingButton, repeatStatus);
+  }
+
   const saveButton = document.createElement("button");
   saveButton.type = "button";
   saveButton.className = "primary";
@@ -104,13 +167,16 @@ async function renderListEditor(container, config) {
       for (const f of fields) values[f.key] = row._inputs[f.key].value.trim();
       if (fields.some((f) => f.required && !values[f.key])) continue; // skip incomplete rows
 
-      let record = fromValues ? fromValues(values) : values;
-      if (idKey) {
-        const id = row._id || generateId(record, taken);
-        taken.add(id);
-        record = { [idKey]: id, ...record };
+      const valuesList = row._repeat ? expandRepeat(values, row._repeat, repeat) : [values];
+      for (const v of valuesList) {
+        let record = fromValues ? fromValues(v) : v;
+        if (idKey) {
+          const id = row._id || generateId(record, taken);
+          taken.add(id);
+          record = { [idKey]: id, ...record };
+        }
+        newRecords.push(record);
       }
-      newRecords.push(record);
     }
 
     saveButton.disabled = true;
@@ -119,11 +185,54 @@ async function renderListEditor(container, config) {
       const result = await github.putFile(dataPath, serialize(newRecords), file ? file.sha : undefined, commitMessage);
       file = { text: serialize(newRecords), sha: result.content.sha };
       saveStatus.textContent = "Saved. GitHub Pages will redeploy shortly.";
+      // Each occurrence is now its own saved record — clear the tag so a
+      // later save in this session doesn't regenerate the whole series again.
+      for (const row of rows) row._repeat = null;
     } catch (err) {
       saveStatus.textContent = err.message;
     }
     saveButton.disabled = false;
   });
 
-  container.append(list, addButton, saveButton, saveStatus);
+  container.append(list, addButton);
+  if (repeatControls) container.append(repeatControls);
+  container.append(saveButton, saveStatus);
+}
+
+// Maximum occurrences a single "repeat until" can generate, as a safeguard
+// against a mistyped far-future until-date silently creating a huge commit.
+const MAX_REPEAT_OCCURRENCES = 100;
+
+// Expands one row's field values into one values-object per occurrence,
+// stepping `repeatConfig.dateKey` (and `endDateKey`, if set on this event)
+// forward with the chosen frequency's `addToDate` until it passes `until`.
+// Falls back to the single occurrence if that produces none (e.g. an until
+// date before the start).
+function expandRepeat(values, repeatSpec, repeatConfig) {
+  const freq = repeatConfig.frequencies.find((f) => f.value === repeatSpec.frequency);
+  if (!freq || !values[repeatConfig.dateKey]) return [values];
+
+  const [uy, um, ud] = repeatSpec.until.split("-").map(Number);
+  const until = new Date(uy, um - 1, ud);
+
+  const [y, m, d] = values[repeatConfig.dateKey].split("-").map(Number);
+  let cursor = new Date(y, m - 1, d);
+
+  const endKey = repeatConfig.endDateKey;
+  let endCursor = null;
+  if (endKey && values[endKey]) {
+    const [ey, em, ed] = values[endKey].split("-").map(Number);
+    endCursor = new Date(ey, em - 1, ed);
+  }
+
+  const out = [];
+  while (cursor <= until && out.length < MAX_REPEAT_OCCURRENCES) {
+    const variant = { ...values, [repeatConfig.dateKey]: repeatConfig.formatDate(cursor) };
+    if (endCursor) variant[endKey] = repeatConfig.formatDate(endCursor);
+    out.push(variant);
+    cursor = freq.addToDate(cursor);
+    if (endCursor) endCursor = freq.addToDate(endCursor);
+  }
+
+  return out.length ? out : [values];
 }

@@ -92,7 +92,11 @@ END:VCALENDAR
   same as `DTSTART`.
 - **No recurrence.** Each `VEVENT` is one occurrence. A weekly meeting is entered as
   individual events rather than an `RRULE` — simpler for both the parser and for a
-  club member editing by hand.
+  club member editing by hand. The editor's "+ Add repeating event" is purely a
+  bulk-creation convenience on top of this: picking a frequency and an until date
+  generates one independent `VEVENT` per occurrence at save time, each with its own
+  `UID`, editable/deletable afterward like any other event — it doesn't add a
+  recurrence concept to the stored format itself.
 - **`UID` is required and stable** so the editor can identify "this is the same
   event, edited" vs "this is a new event" across commits.
 

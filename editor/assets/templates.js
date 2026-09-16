@@ -89,6 +89,16 @@ const TEMPLATES = [
         };
       },
       commitMessage: "Update events via editor",
+      repeat: {
+        dateKey: "date",
+        endDateKey: "endDate",
+        formatDate: dateToInputValue,
+        frequencies: [
+          { value: "weekly", label: "Weekly", addToDate: (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7) },
+          { value: "biweekly", label: "Every 2 weeks", addToDate: (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + 14) },
+          { value: "monthly", label: "Monthly", addToDate: (d) => new Date(d.getFullYear(), d.getMonth() + 1, d.getDate()) },
+        ],
+      },
     }),
   },
   {
