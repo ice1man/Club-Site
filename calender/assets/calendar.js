@@ -9,6 +9,31 @@ function setupSubscribeLink() {
   link.href = new URL("events.ics", location.href).href.replace(/^https?:/, "webcal:");
 }
 
+const DATE_OPTS = { weekday: "short", month: "short", day: "numeric", year: "numeric" };
+const TIME_OPTS = { hour: "numeric", minute: "2-digit" };
+
+// Formats an event's date for display, as a single date(+time), or — when it
+// has an end distinct from its start — a "start – end" range.
+function formatEventDate(e) {
+  const startDate = e.date.toLocaleDateString(undefined, DATE_OPTS);
+  const startTime = e.hasTime ? e.date.toLocaleTimeString(undefined, TIME_OPTS) : "";
+
+  if (!e.end) return startTime ? `${startDate} · ${startTime}` : startDate;
+
+  const sameDay = e.end.toDateString() === e.date.toDateString();
+  const endTime = e.hasEndTime ? e.end.toLocaleTimeString(undefined, TIME_OPTS) : "";
+
+  if (sameDay) {
+    if (startTime && endTime) return `${startDate} · ${startTime} – ${endTime}`;
+    return startTime ? `${startDate} · ${startTime}` : startDate;
+  }
+
+  const endDate = e.end.toLocaleDateString(undefined, DATE_OPTS);
+  const startPart = startTime ? `${startDate} · ${startTime}` : startDate;
+  const endPart = endTime ? `${endDate} · ${endTime}` : endDate;
+  return `${startPart} – ${endPart}`;
+}
+
 // Fetches events.ics and renders them into #events, filtered/sorted by mode.
 async function renderEvents(mode) {
   const list = document.getElementById("events");
@@ -24,10 +49,14 @@ async function renderEvents(mode) {
     return;
   }
 
+  // An in-progress multi-day event (started, not yet ended) still counts as
+  // upcoming — only its end determines whether it's moved to "past".
+  const effectiveEnd = (e) => e.end || e.date;
+
   if (mode === "upcoming") {
-    events = events.filter((e) => e.date >= today).sort((a, b) => a.date - b.date);
+    events = events.filter((e) => effectiveEnd(e) >= today).sort((a, b) => a.date - b.date);
   } else {
-    events = events.filter((e) => e.date < today).sort((a, b) => b.date - a.date);
+    events = events.filter((e) => effectiveEnd(e) < today).sort((a, b) => b.date - a.date);
   }
 
   if (events.length === 0) {
@@ -40,14 +69,7 @@ async function renderEvents(mode) {
 
     const date = document.createElement("span");
     date.className = "date";
-    date.textContent = e.date.toLocaleDateString(undefined, {
-      weekday: "short", month: "short", day: "numeric", year: "numeric",
-    });
-    if (e.hasTime) {
-      date.textContent += " · " + e.date.toLocaleTimeString(undefined, {
-        hour: "numeric", minute: "2-digit",
-      });
-    }
+    date.textContent = formatEventDate(e);
     li.append(date);
 
     const summary = document.createElement("span");

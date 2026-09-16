@@ -19,37 +19,51 @@ function parseICS(text) {
       else if (name === "LOCATION") event.location = unescape(value);
       else if (name === "DESCRIPTION") event.description = unescape(value);
       else if (name === "DTSTART") {
-        const y = +value.slice(0, 4), m = +value.slice(4, 6), d = +value.slice(6, 8);
-        const t = value.indexOf("T");
-        if (t === -1) {
-          event.date = new Date(y, m - 1, d);
-          event.hasTime = false;
-        } else {
-          // Floating local time — a trailing Z (UTC) isn't converted, just ignored.
-          const hh = +value.slice(t + 1, t + 3), mm = +value.slice(t + 3, t + 5);
-          event.date = new Date(y, m - 1, d, hh, mm);
-          event.hasTime = true;
-        }
+        const [date, hasTime] = parseDateOrDateTime(value);
+        event.date = date;
+        event.hasTime = hasTime;
+      } else if (name === "DTEND") {
+        const [date, hasTime] = parseDateOrDateTime(value);
+        // An all-day DTEND is exclusive per RFC 5545 (a 3-day event ending
+        // "Aug 12" is stored as DTEND Aug 13) — shift back one day so `end`
+        // holds the inclusive last day, matching what the editor shows/takes.
+        event.end = hasTime ? date : new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1);
+        event.hasEndTime = hasTime;
       }
     }
     return event;
   }).filter((e) => e.uid && e.date && e.summary);
 }
 
+// Parses a DTSTART/DTEND value (YYYYMMDD or YYYYMMDDTHHMMSS) into [Date, hasTime].
+function parseDateOrDateTime(value) {
+  const y = +value.slice(0, 4), m = +value.slice(4, 6), d = +value.slice(6, 8);
+  const t = value.indexOf("T");
+  if (t === -1) return [new Date(y, m - 1, d), false];
+  // Floating local time — a trailing Z (UTC) isn't converted, just ignored.
+  const hh = +value.slice(t + 1, t + 3), mm = +value.slice(t + 3, t + 5);
+  return [new Date(y, m - 1, d, hh, mm), true];
+}
+
 function serializeICS(events) {
   const escape = (s) => String(s).replace(/[,;]/g, "\\$&").replace(/\n/g, "\\n");
   const pad = (n) => String(n).padStart(2, "0");
+  const dateStamp = (d) => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+  const dateTimeLine = (prop, d, hasTime) => hasTime
+    ? `${prop}:${dateStamp(d)}T${pad(d.getHours())}${pad(d.getMinutes())}00`
+    : `${prop};VALUE=DATE:${dateStamp(d)}`;
 
   const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Club-Site//Calendar//EN", ""];
 
   for (const e of events) {
-    const stamp = `${e.date.getFullYear()}${pad(e.date.getMonth() + 1)}${pad(e.date.getDate())}`;
     lines.push("BEGIN:VEVENT");
     lines.push(`UID:${e.uid}`);
-    if (e.hasTime) {
-      lines.push(`DTSTART:${stamp}T${pad(e.date.getHours())}${pad(e.date.getMinutes())}00`);
-    } else {
-      lines.push(`DTSTART;VALUE=DATE:${stamp}`);
+    lines.push(dateTimeLine("DTSTART", e.date, e.hasTime));
+    if (e.end) {
+      // Restore the RFC 5545 exclusive-end convention for an all-day end
+      // (the inclusive last day held in `end` is written as the day after).
+      const dtend = e.hasEndTime ? e.end : new Date(e.end.getFullYear(), e.end.getMonth(), e.end.getDate() + 1);
+      lines.push(dateTimeLine("DTEND", dtend, e.hasEndTime));
     }
     lines.push(`SUMMARY:${escape(e.summary)}`);
     if (e.location) lines.push(`LOCATION:${escape(e.location)}`);

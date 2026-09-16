@@ -63,17 +63,33 @@ DTSTART:20260922T180000                       (required — has a time, see belo
 SUMMARY:Beginner workshop                     (required — event title)
 END:VEVENT
 
+BEGIN:VEVENT
+UID:2026-10-10-conference@club                (required, stable id for the event)
+DTSTART;VALUE=DATE:20261010                   (all-day, spans multiple days)
+DTEND;VALUE=DATE:20261013                     (optional — see below)
+SUMMARY:Regional conference                   (required — event title)
+END:VEVENT
+
 END:VCALENDAR
 ```
 
 - **Time-of-day is optional.** An event with a start time is stored as
   `DTSTART:YYYYMMDDTHHMMSS` — a floating local time, no `Z` suffix, no
   `TZID`, seconds always `00`. An event without one keeps the all-day form,
-  `DTSTART;VALUE=DATE:YYYYMMDD`. Either way `DTSTART` is a single point in
-  time, not a span — there's no `DTEND`, and no timezone handling: a time is
-  read and written as-is, in whatever timezone whoever entered it meant (a
+  `DTSTART;VALUE=DATE:YYYYMMDD`. No timezone handling: a time is read and
+  written as-is, in whatever timezone whoever entered it meant (a
   `Z`-suffixed value found in a hand-edited file is read the same as one
   without it, not converted).
+- **`DTEND` is optional** and follows the same timed/all-day form as
+  `DTSTART`. When present, it's read into the event's `end` (+ `hasEndTime`)
+  and shown in the editor as "End date"/"End time"; when absent, the event
+  remains a single point in time exactly as before. Per RFC 5545, an all-day
+  `DTEND` is **exclusive** — a 3-day event Oct 10–12 is stored as
+  `DTEND;VALUE=DATE:20261013` (the day *after* the last day). The parser
+  shifts this back by one day so the editor's "End date" field always shows
+  the inclusive last day, and the serializer shifts it forward again on
+  write. A timed `DTEND` has no such shift — it's a literal point in time,
+  same as `DTSTART`.
 - **No recurrence.** Each `VEVENT` is one occurrence. A weekly meeting is entered as
   individual events rather than an `RRULE` — simpler for both the parser and for a
   club member editing by hand.
@@ -82,10 +98,11 @@ END:VCALENDAR
 
 ## Still open
 
-- Multi-day / spanning events (`DTEND`) — still open; each event remains a
-  single point in time, timed or not.
 - Display rules: does the site show past events, or only upcoming? Sort order?
   (Likely upcoming-first, but not decided.)
 - ~~Whether to expose `events.ics` itself as a subscribe link~~ — decided: both
   pages link to it via `webcal:`, so calendar apps subscribe rather than
   one-time-import.
+- ~~Multi-day / spanning events (`DTEND`)~~ — decided: optional `DTEND`,
+  see above. An event whose end hasn't passed yet still counts as
+  "upcoming" even if its start has.

@@ -40,6 +40,8 @@ const TEMPLATES = [
       fields: [
         { key: "date", label: "Date", type: "date", required: true },
         { key: "time", label: "Time", type: "time" },
+        { key: "endDate", label: "End date", type: "date" },
+        { key: "endTime", label: "End time", type: "time" },
         { key: "summary", label: "Event title", type: "text", required: true },
         { key: "location", label: "Location", type: "text" },
         { key: "description", label: "Description", type: "text" },
@@ -51,6 +53,8 @@ const TEMPLATES = [
       toValues: (record) => ({
         date: record.date ? dateToInputValue(record.date) : "",
         time: record.hasTime ? timeToInputValue(record.date) : "",
+        endDate: record.end ? dateToInputValue(record.end) : "",
+        endTime: record.hasEndTime ? timeToInputValue(record.end) : "",
         summary: record.summary || "",
         location: record.location || "",
         description: record.description || "",
@@ -59,9 +63,26 @@ const TEMPLATES = [
         const [y, m, d] = values.date.split("-").map(Number);
         const hasTime = !!values.time;
         const [hh, mm] = hasTime ? values.time.split(":").map(Number) : [0, 0];
+        const date = new Date(y, m - 1, d, hh, mm);
+
+        let end = null, hasEndTime = false;
+        if (values.endDate) {
+          const [ey, em, ed] = values.endDate.split("-").map(Number);
+          hasEndTime = !!values.endTime;
+          const [ehh, emm] = hasEndTime ? values.endTime.split(":").map(Number) : [0, 0];
+          const candidate = new Date(ey, em - 1, ed, ehh, emm);
+          // An untimed end only needs to be on/after the start's calendar day
+          // (its own time-of-day is midnight and shouldn't be compared against
+          // a timed start later the same day).
+          const floor = hasEndTime ? date : new Date(y, m - 1, d);
+          if (candidate >= floor) end = candidate;
+        }
+
         return {
-          date: new Date(y, m - 1, d, hh, mm),
+          date,
           hasTime,
+          end,
+          hasEndTime: end ? hasEndTime : false,
           summary: values.summary,
           location: values.location,
           description: values.description,
