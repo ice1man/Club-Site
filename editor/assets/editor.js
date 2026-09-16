@@ -126,6 +126,7 @@ document.getElementById("connect-form").addEventListener("submit", (e) => {
 
 document.getElementById("back-to-picker").addEventListener("click", openPicker);
 document.getElementById("disconnect").addEventListener("click", () => {
+  if (!confirm("Disconnect from GitHub? You'll need to re-enter your token to reconnect.")) return;
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
 });
