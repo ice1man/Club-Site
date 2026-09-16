@@ -3,42 +3,35 @@ VERSION:2.0
 PRODID:-//Club-Site//Calendar//EN
 
 BEGIN:VEVENT
-UID:2026-08-10-kickoff@club-site.example
-DTSTART;VALUE=DATE:20260810
-SUMMARY:Semester kickoff social
-LOCATION:Student Union\, Room 210
-DESCRIPTION:Meet the officers and sign up for committees.
+UID:2026-09-22-fbla-meeting@club-site
+DTSTART:20260922T074500
+DTEND:20260922T081500
+SUMMARY:FBLA Meeting
+LOCATION:Media center
+DESCRIPTION:With guest speaker
 END:VEVENT
 
 BEGIN:VEVENT
-UID:2026-09-15-general-meeting@club-site.example
-DTSTART:20260915T090800
-SUMMARY:General meeting
-LOCATION:Room 204
-DESCRIPTION:Bring your laptop.
+UID:2026-10-06-fbla-meeting@club-site
+DTSTART:20261006T074500
+DTEND:20261006T081500
+SUMMARY:FBLA Meeting
+LOCATION:Media center
 END:VEVENT
 
 BEGIN:VEVENT
-UID:2026-09-22-workshop@club-site.example
-DTSTART;VALUE=DATE:20260922
-SUMMARY:Beginner workshop
-LOCATION:Library\, Room B12
-DESCRIPTION:testing update time
+UID:2026-10-20-fbla-meeting@club-site
+DTSTART:20261020T074500
+DTEND:20261020T081500
+SUMMARY:FBLA Meeting
+LOCATION:Media center
 END:VEVENT
 
 BEGIN:VEVENT
-UID:2026-10-05-fundraiser@club-site.example
-DTSTART;VALUE=DATE:20261005
-SUMMARY:Fundraiser bake sale
-LOCATION:Quad
-DESCRIPTION:Volunteers welcome — sign up on the group chat.
-END:VEVENT
-
-BEGIN:VEVENT
-UID:2027-11-17-happy@club-site
-DTSTART;VALUE=DATE:20271117
-SUMMARY:happy
-DESCRIPTION:be happy
+UID:2026-11-03-fbla-meeting@club-site
+DTSTART:20261103T074500
+SUMMARY:FBLA Meeting
+LOCATION:Media center
 END:VEVENT
 
 END:VCALENDAR
