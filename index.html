@@ -1,7 +1,9 @@
 <!doctype html>
+<!-- Built with Club-Site, created by ICLX (icecubelabs.xyz) -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="generator" content="Club-Site by ICLX (icecubelabs.xyz)">
 <title>Club Site</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>%F0%9F%91%A5</text></svg>">
 <style>
@@ -28,9 +30,48 @@
     <a data-page="about" href="about/index.html"><span class="icon">👥</span><img class="icon" alt="">Our Team</a>
     <a data-page="feedback" href="https://docs.google.com/forms/d/e/1FAIpQLScT0h3Ph6hrFQA-VgD-CpNsoy3BcX07mN5oRUob7Sc38rM9gg/viewform?usp=publish-editor" target="_blank" rel="noopener"><span class="icon">📝</span><img class="icon" alt="">Feedback</a>
     <a data-page="rewards" href="rewards/index.html"><span class="icon">🏆</span><img class="icon" alt="">Rewards</a>
+    <a data-page="resources" href="resources/index.html"><span class="icon">📚</span><img class="icon" alt="">Resources</a>
   </div>
   <script>
-    fetch("site.json").then((r) => r.json()).then((site) => {
+    // Only http(s), mailto, and scheme-less (relative) URLs are allowed, so a
+    // hand-edited home-links.json can't turn a tile into a javascript: link.
+    function isSafeUrl(url) {
+      if (!url) return false;
+      const scheme = url.match(/^([a-z][a-z0-9+.-]*):/i);
+      return !scheme || ["http", "https", "mailto"].includes(scheme[1].toLowerCase());
+    }
+
+    Promise.all([
+      fetch("site.json").then((r) => r.json()),
+      fetch("home-links.json").then((r) => r.json()).catch(() => []),
+    ]).then(([site, homeLinks]) => {
+      // Custom tiles go in first, so the icon/color settings below apply to
+      // them the same as to the built-in tiles.
+      const links = document.querySelector(".links");
+      for (const l of Array.isArray(homeLinks) ? homeLinks : []) {
+        if (!isSafeUrl(l.url)) continue;
+        const tile = document.createElement("a");
+        tile.dataset.page = "custom";
+        tile.href = l.url;
+        if (/^https?:/i.test(l.url)) {
+          tile.target = "_blank";
+          tile.rel = "noopener";
+        }
+        const span = document.createElement("span");
+        span.className = "icon";
+        span.textContent = "🔗";
+        const img = document.createElement("img");
+        img.className = "icon";
+        img.alt = "";
+        if (l.photo) {
+          span.style.display = "none";
+          img.src = l.photo;
+          img.style.display = "block";
+        }
+        tile.append(span, img, document.createTextNode(l.title || l.url));
+        links.append(tile);
+      }
+
       if (site.title) {
         document.title = site.title;
         document.getElementById("site-title").textContent = site.title;
@@ -40,6 +81,7 @@
         "calender": site.iconCalender,
         "about": site.iconAbout,
         "rewards": site.iconRewards,
+        "resources": site.iconResources,
         "feedback": site.iconFeedback,
       };
       for (const [page, src] of Object.entries(icons)) {
@@ -81,6 +123,7 @@
         "calender": site.hideCalender,
         "about": site.hideAbout,
         "rewards": site.hideRewards,
+        "resources": site.hideResources,
         "feedback": site.hideFeedback,
       };
       for (const [page, isHidden] of Object.entries(hidden)) {
@@ -90,5 +133,6 @@
       }
     }).catch(() => {}); // keep the hardcoded defaults above if this fails
   </script>
+  <span hidden aria-hidden="true" data-watermark>Created by ICLX (icecubelabs.xyz)</span>
 </body>
 </html>

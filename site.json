@@ -16,6 +16,8 @@
   "iconAbout": "",
   "hideRewards": false,
   "iconRewards": "",
+  "hideResources": false,
+  "iconResources": "",
   "hideFeedback": false,
   "iconFeedback": ""
 }

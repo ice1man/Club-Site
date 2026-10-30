@@ -199,12 +199,59 @@ const TEMPLATES = [
         { key: "iconAbout", label: "Our Team icon image path", type: "text" },
         { key: "hideRewards", label: "Hide Rewards page", type: "checkbox" },
         { key: "iconRewards", label: "Rewards icon image path", type: "text" },
+        { key: "hideResources", label: "Hide Resources page", type: "checkbox" },
+        { key: "iconResources", label: "Resources icon image path", type: "text" },
         { key: "hideFeedback", label: "Hide Feedback link", type: "checkbox" },
         { key: "iconFeedback", label: "Feedback icon image path", type: "text" },
       ],
       parse: (text) => JSON.parse(text),
       serialize: (record) => JSON.stringify(record, null, 2),
       commitMessage: "Update home page via editor",
+    }),
+  },
+  {
+    id: "resources",
+    name: "Resources",
+    description: "Useful links for members: title, URL, description, and photo.",
+    dataPath: "resources/links.json",
+    // Already ships in every fork of Club-Site — nothing to create.
+    scaffold: null,
+
+    renderEditor: (container, ctx) => renderListEditor(container, {
+      github: ctx.github,
+      dataPath: "resources/links.json",
+      fields: [
+        { key: "title", label: "Title", type: "text", required: true },
+        { key: "url", label: "URL", type: "url", required: true },
+        { key: "description", label: "Description", type: "textarea" },
+        { key: "photo", label: "Photo path", type: "text" },
+      ],
+      parse: (text) => JSON.parse(text),
+      serialize: (records) => JSON.stringify(records, null, 2),
+      commitMessage: "Update resources via editor",
+      reorder: true,
+    }),
+  },
+  {
+    id: "home-links",
+    name: "Home Page Links",
+    description: "Extra tiles on the home page, each with a custom title, link, and photo.",
+    dataPath: "home-links.json",
+    // Already ships in every fork of Club-Site — nothing to create.
+    scaffold: null,
+
+    renderEditor: (container, ctx) => renderListEditor(container, {
+      github: ctx.github,
+      dataPath: "home-links.json",
+      fields: [
+        { key: "title", label: "Title", type: "text", required: true },
+        { key: "url", label: "URL", type: "url", required: true },
+        { key: "photo", label: "Photo path", type: "text" },
+      ],
+      parse: (text) => JSON.parse(text),
+      serialize: (records) => JSON.stringify(records, null, 2),
+      commitMessage: "Update home page links via editor",
+      reorder: true,
     }),
   },
   {

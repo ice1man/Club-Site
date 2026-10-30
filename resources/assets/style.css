@@ -1,0 +1,24 @@
+#resources {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1.5rem;
+}
+
+.resource-card {
+  text-align: center;
+}
+
+.resource-card img {
+  width: 6rem;
+  height: 6rem;
+  object-fit: contain;
+}
+
+.resource-card h3 {
+  margin: 0.75rem 0 0.25rem;
+}
+
+.description {
+  font-size: 0.9rem;
+  margin: 0;
+}
