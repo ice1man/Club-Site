@@ -1,5 +1,11 @@
 {
   "title": "Lake Norman High School",
+  "showBanner": false,
+  "bannerText": "",
+  "bannerLink": "",
+  "bannerUntil": "",
+  "bannerBackground": "#ffcc00",
+  "bannerTextColor": "#000000",
   "showIcons": true,
   "logo": "assets/logo.png",
   "logoBackground": "#25377b",

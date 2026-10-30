@@ -47,5 +47,5 @@ Adding a new template site means: a new top-level folder + data file, a `TEMPLAT
 
 ## Versioning conventions
 
-- **Cache-busting:** every local `<script src>` / stylesheet `href` carries a shared `?v=N` query string (currently `?v=14`). Whenever any `.js` or `.css` file under an `assets/` folder changes, bump `N` **everywhere it appears across all HTML pages** (one shared number). Data files (`*.json`, `events.ics`) are never versioned.
+- **Cache-busting:** every local `<script src>` / stylesheet `href` carries a shared `?v=N` query string (currently `?v=15`). Whenever any `.js` or `.css` file under an `assets/` folder changes, bump `N` **everywhere it appears across all HTML pages** (one shared number). Data files (`*.json`, `events.ics`) are never versioned.
 - **`info.json` `version`:** the release number forks compare against upstream to show the editor's "update available" banner. Bump it for changes clubs should sync (new templates/features), not for content edits.

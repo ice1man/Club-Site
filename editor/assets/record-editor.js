@@ -4,11 +4,12 @@
 // who-we-are/info.json or site.json, vs. calendar events or admins).
 // Field types: "text", "textarea", "lines" (textarea <-> string array,
 // one entry per non-empty line), "checkbox" (boolean), "color" (hex string —
-// give the field a `default`, since an empty color input reads as #000000).
+// give the field a `default`, since an empty color input reads as #000000),
+// "date" (YYYY-MM-DD string, empty when unset).
 
 // Field types backed by an <input> and the type= they use; everything else
 // renders as a <textarea>.
-const INPUT_TYPES = { text: "text", checkbox: "checkbox", color: "color" };
+const INPUT_TYPES = { text: "text", checkbox: "checkbox", color: "color", date: "date" };
 
 async function renderRecordEditor(container, config) {
   const { github, dataPath, fields, parse, serialize, commitMessage } = config;

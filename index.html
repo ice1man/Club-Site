@@ -18,10 +18,15 @@
   img.icon { display: none; width: 6rem; height: 6rem; object-fit: contain; }
   /* Padding/radius are invisible until site.json sets a background, matching
      the same trick used for .links. */
+  /* Announcement banner, shown only while site.json has it switched on and its
+     optional end date hasn't passed. */
+  #site-banner { align-self: stretch; padding: 1.5rem 2rem; border-radius: 12px; background: #ffcc00; color: #000; font-size: 1.75rem; font-weight: bold; text-align: center; white-space: pre-line; }
+  #site-banner a { text-decoration: underline; }
   #site-logo { max-width: min(100%, 28rem); max-height: 14rem; padding: 0.5rem 1rem; border-radius: 12px; }
 </style>
 </head>
 <body>
+  <div id="site-banner" hidden></div>
   <img id="site-logo" alt="" hidden>
   <h1 id="site-title">Club Site</h1>
   <div class="links">
@@ -70,6 +75,31 @@
         }
         tile.append(span, img, document.createTextNode(l.title || l.url));
         links.append(tile);
+      }
+
+      // Banner: hidden again automatically once the end date has passed. Dates
+      // compare as local YYYY-MM-DD strings, so it stays up through the whole
+      // end day — checked in the visitor's browser, no redeploy needed.
+      const pad = (n) => String(n).padStart(2, "0");
+      const now = new Date();
+      const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+      if (site.showBanner && site.bannerText && (!site.bannerUntil || today <= site.bannerUntil)) {
+        const banner = document.getElementById("site-banner");
+        if (isSafeUrl(site.bannerLink)) {
+          const link = document.createElement("a");
+          link.href = site.bannerLink;
+          link.textContent = site.bannerText;
+          if (/^https?:/i.test(site.bannerLink)) {
+            link.target = "_blank";
+            link.rel = "noopener";
+          }
+          banner.append(link);
+        } else {
+          banner.textContent = site.bannerText;
+        }
+        if (site.bannerBackground) banner.style.backgroundColor = site.bannerBackground;
+        if (site.bannerTextColor) banner.style.color = site.bannerTextColor;
+        banner.hidden = false;
       }
 
       if (site.title) {

@@ -173,7 +173,7 @@ const TEMPLATES = [
   {
     id: "site",
     name: "Home Page",
-    description: "Site title, logo, per-option custom icons, page/box/text colors, and which home page tiles are shown.",
+    description: "Site title, temporary announcement banner, logo, per-option custom icons, page/box/text colors, and which home page tiles are shown.",
     dataPath: "site.json",
     // Already ships in every fork of Club-Site — nothing to create.
     scaffold: null,
@@ -183,6 +183,12 @@ const TEMPLATES = [
       dataPath: "site.json",
       fields: [
         { key: "title", label: "Site title", type: "text", required: true },
+        { key: "showBanner", label: "Show announcement banner", type: "checkbox" },
+        { key: "bannerText", label: "Banner message", type: "textarea" },
+        { key: "bannerLink", label: "Banner link URL", type: "text" },
+        { key: "bannerUntil", label: "Hide banner automatically after", type: "date" },
+        { key: "bannerBackground", label: "Banner background color", type: "color", default: "#ffcc00" },
+        { key: "bannerTextColor", label: "Banner text color", type: "color", default: "#000000" },
         { key: "showIcons", label: "Show icons", type: "checkbox" },
         { key: "logo", label: "Logo image path", type: "text" },
         { key: "logoBackground", label: "Logo background color", type: "color", default: "#ffffff" },
